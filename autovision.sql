@@ -1,4 +1,4 @@
---creare table Masini
+-- create Masini table
 CREATE TABLE Masini ( 
 ID_Masina NUMBER PRIMARY KEY, 
 Marca VARCHAR2(50) NOT NULL, 
@@ -8,7 +8,7 @@ Stare VARCHAR2(20) CHECK (Stare IN ('Nou', 'Second-Hand')),
 Disponibil NUMBER(1) DEFAULT 1 
 );
 
---creare tabel Clienti1
+-- create Clienti1 table
 CREATE TABLE Clienti1 ( 
 ID_Client NUMBER PRIMARY KEY, 
 Nume VARCHAR2(50) NOT NULL, 
@@ -17,7 +17,7 @@ Telefon VARCHAR2(15) UNIQUE,
 Email VARCHAR2(50) 
 );
 
---creare tabel Vanzari
+-- create Vanzari table
 CREATE TABLE Vanzari ( 
 ID_Vanzare NUMBER PRIMARY KEY, 
 ID_Masina NUMBER REFERENCES Masini(ID_Masina), 
@@ -26,7 +26,7 @@ Data_Vanzare DATE DEFAULT SYSDATE,
 Pret_Final NUMBER(10, 2) 
 );
 
---creare tabel Garantii
+-- create Garantii table
 CREATE TABLE Garantii ( 
 ID_Garantie NUMBER PRIMARY KEY, 
 ID_Masina NUMBER REFERENCES Masini(ID_Masina), 
@@ -34,26 +34,26 @@ Data_Inceput DATE DEFAULT SYSDATE,
 Data_Sfarsit DATE 
 );
 
---adaugati o constrangere check in tabelul Masini pentru ca valoarea din coloana Stare sa fie doar Nou sau Second-Hand
+-- add a check constraint to the Masini table so the value in the Stare column can only be Nou or Second-Hand
 ALTER TABLE Masini ADD CONSTRAINT CK_Stare CHECK (Stare IN ('Nou', 'Second-Hand'));
 
---adaugati coloana Culoare in tabelul Masini, cu valoarea implicita Necunoscut
+-- add the Culoare column to the Masini table, with the default value Necunoscut
 ALTER TABLE Masini ADD Culoare VARCHAR2(20) DEFAULT 'Necunoscut';
 
 
--- extindeți lungimea coloanei Email din tabelul Clienti1 la 100 de caractere
+-- extend the length of the Email column in the Clienti1 table to 100 characters
 ALTER TABLE Clienti1 MODIFY Email VARCHAR2(100);
 
 
---adăugați coloana Discount în tabelul Vanzari 
+-- add the Discount column to the Vanzari table
 ALTER TABLE Vanzari ADD Discount NUMBER(5, 2);
 
 
---stergeți tabelul Vanzari împreună cu toate constrângerile asociate
+-- delete the Vanzari table along with all associated constraints
 DROP TABLE Vanzari CASCADE CONSTRAINTS;
 
 
---adăugați trei vehicule noi în tabelul Masini, specificând ID-ul fiecărei mașini, marca, modelul, prețul, starea și disponibilitatea acestora: 
+-- add three new vehicles to the Masini table, specifying each car's ID, brand, model, price, condition, and availability:
 INSERT INTO Masini (ID_Masina, Marca, Model, Pret, Stare, Disponibil) 
 VALUES (1, 'Toyota', 'Corolla', 22000, 'Nou', 1); 
 INSERT INTO Masini (ID_Masina, Marca, Model, Pret, Stare, Disponibil) 
@@ -65,92 +65,91 @@ VALUES (4, 'Dacia', 'Duster', 18000, 'Nou', 1);
 INSERT INTO Masini (ID_Masina, Marca, Model, Pret, Stare, Disponibil) 
 VALUES (5, 'Mercedes', 'A-Class', 35000, 'Second-Hand', 1);
 
---adăugați două tranzacții în tabelul Vanzari, specificând ID-ul tranzacției, ID-ul mașinii, ID-ul clientului, data vânzării și prețul final, folosind TO_DATE() pentru formatarea corectă a datei. 
+-- add two transactions to the Vanzari table, specifying the transaction ID, car ID, customer ID, sale date, and final price, using TO_DATE() for correct date formatting.
 INSERT INTO Vanzari (ID_Vanzare, ID_Masina, ID_Client, Data_Vanzare, Pret_Final) 
 VALUES (1, 1, 1, TO_DATE('2024-12-01', 'YYYY-MM-DD'), 22000); 
 INSERT INTO Vanzari (ID_Vanzare, ID_Masina, ID_Client, Data_Vanzare, Pret_Final) 
 VALUES (2, 3, 2, TO_DATE('2024-12-15', 'YYYY-MM-DD'), 60000);
 
 
---adăugați o garanție în tabelul Garantii pentru mașina cu ID_Masina = 4, cu data de început 20 decembrie 2024 și data de sfârșit 20 decembrie 2027, utilizând TO_DATE() pentru conversia corectă a datelor. 
+-- add a warranty in the Garantii table for the car with ID_Masina = 4, with a start date of December 20, 2024, and an end date of December 20, 2027, using TO_DATE() for correct date conversion.
 INSERT INTO Garantii (ID_Garantie, ID_Masina, Data_Inceput, Data_Sfarsit) 
 VALUES (1, 4, TO_DATE('2024-12-20', 'YYYY-MM-DD'), TO_DATE('2027-12-20', 'YYYY-MM-DD'));
 
 
---adăugați o nouă mașină în tabelul Masini, specificând ID-ul, marca, modelul, prețul, starea și disponibilitatea acesteia. 
+-- add a new car to the Masini table, specifying its ID, brand, model, price, condition, and availability.
 INSERT INTO Masini (ID_Masina, Marca, Model, Pret, Stare, Disponibil) 
 VALUES (2, 'Dacia', 'Duster', 18000, 'Nou', 1);
 
 
---inregistrați o nouă vânzare pentru clientul cu ID-ul 2, care achiziționează mașina cu ID-ul 4, aplicând un discount. 
-Data vânzării este 20 decembrie 2024, iar prețul final rezultat după aplicarea discountului este 17.000. 
+-- record a new sale for the customer with ID 2, who purchases the car with ID 4, applying a discount.
+-- The sale date is December 20, 2024, and the final price resulting after applying the discount is 17,000.
 INSERT INTO Vanzari (ID_Vanzare, ID_Masina, ID_Client, Data_Vanzare, Pret_Final) 
 VALUES (3, 4, 2, TO_DATE('2024-12-20', 'YYYY-MM-DD'), 17000);
 
 
---marcați vehiculul cu ID-ul 1 ca fiind vândut, actualizând câmpul Disponibil: 
+-- mark the vehicle with ID 1 as sold by updating the Disponibil field:
 UPDATE Masini 
 SET Disponibil = 0 
 WHERE ID_Masina = 1;
 
 
---actualizați prețul final pentru tranzacția cu ID-ul 1: 
+-- update the final price for the transaction with ID 1:
 UPDATE Vanzari 
 SET Pret_Final = 21000 
 WHERE ID_Vanzare = 1;
 
---actualizați adresa de email a clientului cu ID-ul 2 pentru a corecta o eroare: 
+-- update the email address of the customer with ID 2 to correct an error:
 UPDATE Clienti1 
 SET Email = 'alexia.vacaru@newdomain.com' 
 WHERE ID_Client = 2;
 
---actualizați marca și modelul mașinii cu ID-ul 3: 
+-- update the brand and model of the car with ID 3:
 UPDATE Masini 
 SET Marca = 'Mercedes', Model = 'GLC' 
 WHERE ID_Masina = 3;
 
---stergeți mașinile care au starea “Second-Hand”: 
+-- delete cars that have the “Second-Hand” status:
 DELETE FROM Masini 
 WHERE Stare = 'Second-Hand';
 
---stergeți clientul cu ID-ul 2 din baza de date: 
+-- delete the customer with ID 2 from the database:
 DELETE FROM Clienti1 
 WHERE ID_Client = 2;
 
---afișați toate informațiile despre clientul cu ID-ul 2: 
-SELECT * 
-FROM Clienti1 
+-- display all information about the customer with ID 2:
+SELECT * FROM Clienti1 
 WHERE ID_Client = 2;
 
---afișați mașinile cu prețul mai mare de 30.000 și care nu sunt noi. 
+-- display cars with a price greater than 30,000 and that are not new.
 SELECT ID_Masina, Marca, Model, Pret 
 FROM Masini 
 WHERE Pret > 30000 AND Stare != 'Nou';
 
---afișați clienții care nu au specificată adresa de e-mail. 
+-- display customers who do not have a specified email address.
 SELECT ID_Client, Nume, Prenume 
 FROM Clienti1 
 WHERE Email IS NULL;
 
---afișați toate mașinile care au prețul între 20.000 și 50.000. 
+-- display all cars that have a price between 20,000 and 50,000.
 SELECT Marca, Model, Pret
 FROM Masini 
 WHERE Pret BETWEEN 20000 AND 50000;
 
---afișați starea mașinilor și numărul de vehicule pentru fiecare stare. 
+-- display the status of the cars and the number of vehicles for each status.
 SELECT Stare, COUNT(*) AS Nr_Masini 
 FROM Masini 
 GROUP BY Stare;
 
---afisati masinile care au un pret mai mare decat toate preturile masinilor second-hand. 
+-- display cars that have a price higher than all the prices of second-hand cars.
 SELECT Marca, Model, Pret 
 FROM Masini 
 WHERE Pret > ALL (SELECT Pret FROM Masini WHERE Stare = 'Second-Hand');
 
---afișați toți clienții care nu au un nume ce începe cu litera ‘A’, împreună cu numărul de comenzi plasate de fiecare client și discount-ul acordat, calculat astfel: 
---dacă un client are exact 1 comandă, discount-ul este de 10% 
---dacă un client are exact 2 comenzi, discount-ul este de 15% 
---dacă un client are 3 sau mai multe comenzi, discount-ul este de 20% 
+-- display all customers who do not have a name starting with the letter 'A', along with the number of orders placed by each customer and the granted discount, calculated as follows:
+-- if a customer has exactly 1 order, the discount is 10%
+-- if a customer has exactly 2 orders, the discount is 15%
+-- if a customer has 3 or more orders, the discount is 20%
 SELECT Nume, 
 (SELECT COUNT(*) 
 FROM Vanzari 
@@ -171,7 +170,7 @@ FROM Clienti1
 MINUS 
 SELECT Nume, 
 (SELECT COUNT(*) 
-FROM Vanzari
+FROM Vanzari 
 WHERE Vanzari.ID_Client = Clienti1.ID_Client) AS Numar_Comenzi, 
 CASE 
 WHEN (SELECT COUNT(*) 
@@ -188,10 +187,10 @@ END AS Discount
 FROM Clienti1 
 WHERE Nume LIKE 'A%';
 
---se determină comisionul pe baza numărului comenzilor efectuate:
---1 comanda → comision 10% din valoarea totală.
---2 comenzi → comision 20%.
---3 sau mai multe comenzi → comision 30%.
+-- the commission is determined based on the number of orders placed:
+-- 1 order → 10% commission of the total value.
+-- 2 orders → 20% commission.
+-- 3 or more orders → 30% commission.
 SELECT Nume, 
 (SELECT COUNT(*) 
 FROM Vanzari 
@@ -228,7 +227,7 @@ WHERE (SELECT COUNT(*)
 FROM Vanzari 
 WHERE Vanzari.ID_Client = Clienti1.ID_Client) >= 3;
 
---se selectează produsele comandate de cel puțin 3 ori, care au valoarea totală diferită de 20.000 sau 50.000. 
+-- select products ordered at least 3 times that have a total value different from 20,000 or 50,000.
 SELECT Marca, 
 (SELECT COUNT(*) 
 FROM Vanzari 
@@ -253,19 +252,19 @@ WHERE (SELECT SUM(Pret_Final)
 FROM Vanzari 
 WHERE Vanzari.ID_Masina = Masini.ID_Masina) NOT IN (20000, 50000);
 
---afișați ID-ul tranzacției și data formatată DD-MM-YYYY. 
+-- display the transaction ID and the date formatted as DD-MM-YYYY.
 SELECT ID_Vanzare, TO_CHAR(Data_Vanzare, 'DD-MM-YYYY') AS Data_Tranzactie 
 FROM Vanzari;
 
---afișați tranzacțiile efectuate după 1 decembrie 2024. 
+-- display transactions carried out after December 1, 2024.
 SELECT ID_Vanzare, Pret_Final 
 FROM Vanzari 
 WHERE Data_Vanzare > TO_DATE('2024-12-01', 'YYYY-MM-DD');
 
---afișați numele și prenumele clienților care au plasat comenzi și al căror nume nu începe cu litera ‘A’, împreună cu discount-ul acordat, calculat astfel: 
---discount-ul este de 10% pentru clienții cu o singură comandă. 
---discount-ul este de 15% pentru clienții cu două comenzi. 
---discount-ul este de 20% pentru clienții cu trei sau mai multe comenzi. 
+-- display the first and last names of customers who placed orders and whose names do not start with the letter 'A', along with the granted discount, calculated as follows:
+-- the discount is 10% for customers with a single order.
+-- the discount is 15% for customers with two orders.
+-- the discount is 20% for customers with three or more orders.
 SELECT Nume, Prenume, 
 CASE 
 WHEN COUNT(ID_Vanzare) = 1 THEN 0.1 
@@ -288,39 +287,39 @@ FROM Clienti1 c, Vanzari v
 WHERE c.ID_Client = v.ID_Client AND Nume LIKE 'A%' 
 GROUP BY Nume, Prenume;
 
---afișați starea mașinilor și prețul mediu al acestora, doar pentru stările cu cel puțin 2 vehicule. 
+-- display the status of the cars and their average price, only for statuses with at least 2 vehicles.
 SELECT Stare, AVG(Pret) AS Pret_Mediu 
 FROM Masini 
 GROUP BY Stare 
 HAVING COUNT(*) >= 2;
 
---afișați clienții și adresele de e-mail, utilizând “Necunoscut” pentru emailurile NULL. 
+-- display customers and email addresses, using “Necunoscut” for NULL emails.
 SELECT Nume, Prenume, NVL(Email, 'Necunoscut') AS Email
 FROM Clienti1;
 
---afișați primele 3 litere ale fiecărei mărci de mașini. 
+-- display the first 3 letters of each car brand.
 SELECT Marca, SUBSTR(Marca, 1, 3) AS Prefix 
 FROM Masini;
 
---afișați numărul total de tranzacții efectuate în fiecare an, extrăgând anul din data vânzării și grupând rezultatele în funcție de acesta. 
+-- display the total number of transactions carried out in each year, extracting the year from the sale date and grouping the results accordingly.
 SELECT EXTRACT(YEAR FROM Data_Vanzare) AS An_Tranzactie, COUNT(*) AS Nr_Tranzactii 
 FROM Vanzari 
 GROUP BY EXTRACT(YEAR FROM Data_Vanzare);
 
---afișați clienții și suma totală a cheltuielilor acestora, selectând doar cei care au cheltuit mai mult de 50.000 pe achiziția de mașini. 
+-- display customers and the total sum of their expenses, selecting only those who spent more than 50,000 on car purchases.
 SELECT ID_Client, SUM(Pret_Final) AS Total_Cheltuit 
 FROM Vanzari 
 GROUP BY ID_Client 
 HAVING SUM(Pret_Final) > 50000;
 
---afișați toate mașinile din ierarhie, împreună cu nivelul lor ierarhic, ordonate crescător după nivel. 
+-- display all cars in the hierarchy, along with their hierarchical level, ordered increasingly by level.
 SELECT ID_Masina, Marca, Model, LEVEL 
 FROM Masini 
 START WITH ID_Parinte IS NULL 
 CONNECT BY PRIOR ID_Masina = ID_Parinte 
 ORDER BY LEVEL;
 
---afișați traseul complet al fiecărei mașini din ierarhie, indicând toate nodurile ierarhice până la mașina respectivă. Utilizați caracterul / pentru a separa fiecare nod din traseu. 
+-- display the complete path of each car in the hierarchy, indicating all hierarchical nodes up to that car. Use the character / to separate each node in the path.
 SELECT ID_Masina, 
 SYS_CONNECT_BY_PATH(Marca || ' ' || Model, '/') AS Cale_Completa, 
 LEVEL 
@@ -328,7 +327,7 @@ FROM Masini
 START WITH ID_Parinte IS NULL 
 CONNECT BY PRIOR ID_Masina = ID_Parinte;
 
---selectați doar mașinile aflate pe nivelul 2 al ierarhiei și ordonați-le după ID-ul mașinii. 
+-- select only the cars on level 2 of the hierarchy and order them by car ID.
 SELECT ID_Masina, Marca, Model, LEVEL 
 FROM Masini 
 WHERE LEVEL = 2 
@@ -336,7 +335,7 @@ CONNECT BY PRIOR ID_Masina = ID_Parinte
 ORDER BY ID_Masina;
 
 
---listați toate mașinile din ierarhie, împreună cu nivelul lor și cu numărul total de superiori din calea lor ierarhică, ordonate după nivel și ID-ul mașinii. 
+-- list all cars in the hierarchy, along with their level and the total number of superiors in their hierarchical path, ordered by level and car ID.
 SELECT ID_Masina, Marca, Model, LEVEL, SYS_CONNECT_BY_PATH(Marca, '/') AS Superioara 
 FROM Masini 
 START WITH ID_Parinte IS NULL 
@@ -344,7 +343,7 @@ CONNECT BY PRIOR ID_Masina = ID_Parinte
 ORDER BY LEVEL, ID_Masina;
 
 
---creați o vedere pentru a afișa detalii complete despre vânzări, incluzând informațiile despre client și mașină. 
+-- create a view to display complete sales details, including customer and car information.
 CREATE VIEW Vanzari_Detaliate AS 
 SELECT 
 v.ID_Vanzare, 
@@ -356,19 +355,15 @@ FROM Vanzari v, Clienti1 c, Masini m
 WHERE v.ID_Client = c.ID_Client 
 AND v.ID_Masina = m.ID_Masina;
 
---creați un index pentru coloana Pret din tabelul Masini pentru a optimiza căutările după preț. 
+-- create an index for the Pret column in the Masini table to optimize price searches.
 CREATE INDEX idx_pret_masini ON Masini(Pret);
 
---creați o secvență pentru a genera automat ID-urile tranzacțiilor în tabelul Vanzari. 
+-- create a sequence to automatically generate transaction IDs in the Vanzari table.
 CREATE SEQUENCE seq_vanzari 
 START WITH 1 
 INCREMENT BY 1 
 NOCACHE 
 NOCYCLE;
 
---crearea unui sinonim pentru view-ul Vanzari_Detaliate. 
+-- creating a synonym for the Vanzari_Detaliate view.
 CREATE SYNONYM Sinonim_Vanzari_Detaliate FOR Vanzari_Detaliate;
-
-
-
-
